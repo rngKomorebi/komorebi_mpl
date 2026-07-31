@@ -1,19 +1,24 @@
 import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import matplotlib.style as style
+from matplotlib import rc_params_from_file
 
 # Path to the 'styles' folder inside the package
 _styles_dir = os.path.join(os.path.dirname(__file__), "styles")
 
-# Read all .mplstyle files in the directory
-_stylesheets = style.core.read_style_directory(_styles_dir)
+# Read all .mplstyle files in the directory and register them
+_stylesheets = {
+    p.stem: rc_params_from_file(p, use_default_template=False)
+    for p in Path(_styles_dir).glob("*.mplstyle")
+}
 
 # Update Matplotlib's style library with your styles
-style.core.update_nested_dict(style.library, _stylesheets)
+style.library.update(_stylesheets)
 
 # Update available styles so they appear in style.available
-style.core.available[:] = sorted(style.library.keys())
+style.available[:] = sorted(style.library.keys())
 
 # Becomes True once the user explicitly picks a style via use(). Package
 # defaults applied through apply_default() then step aside, so an explicit
