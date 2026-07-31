@@ -1,8 +1,61 @@
 # minimal — Tufte-inspired: data-forward, no visual clutter.
-# No grid, outward ticks, only bottom+left axis lines visible,
-# generous whitespace, lighter frame.
+# No grid, outward ticks, only bottom+left spines, generous whitespace,
+# lighter frame, frameless legend.
+#
+# Palette: muted and accessible (ColorBrewer-derived).
+#   2166AC  blue
+#   D6604D  brick
+#   4DAC26  green
+#   F4A11D  amber
+#   762A83  purple
+#   1B7837  deep green
+#
+# The grid and minor-tick parameters below are declared for consistency with
+# the other styles but have no visible effect here (axes.grid: False,
+# x/ytick.minor.visible: False) — they define the look if you re-enable them.
+#
+# Every komorebi_mpl style declares the same parameters in the same section
+# order; only the values differ.
 
-# Ticks — outward, bottom+left only, no minor ticks
+# ── Fonts ───────────────────────────────────────────────────────────────────
+# font.size is the base; the slots below are deliberately smaller so legends,
+# labels, ticks and annotations don't overwhelm the data. Free-floating text
+# boxes have no rcParam of their own, so code should use matplotlib *relative*
+# sizes ('small', 'x-small', ...) — fractions of this base, so they follow the
+# style too.
+font.size: 30
+axes.titlesize: 28
+axes.labelsize: 26
+xtick.labelsize: 22
+ytick.labelsize: 22
+legend.fontsize: 20
+figure.titlesize: 30
+font.family: sans-serif
+font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans
+
+# ── Figure ──────────────────────────────────────────────────────────────────
+figure.figsize: 16, 10
+figure.frameon: False
+figure.subplot.top: 0.94
+figure.subplot.right: 0.93
+figure.facecolor: "#FFFFFF"
+savefig.facecolor: "#FFFFFF"
+# figure.dpi: 100
+# savefig.dpi: 300
+# savefig.bbox: tight
+
+# ── Axes — lighter frame, bottom+left spines only (full Tufte look) ──────────
+axes.facecolor: "#FFFFFF"
+axes.edgecolor: "#4D4D4D"
+axes.linewidth: 1.2
+axes.titlepad: 16
+axes.labelpad: 10
+axes.spines.top: False
+axes.spines.right: False
+axes.grid: False
+axes.grid.which: both
+
+# ── Ticks — outward, bottom+left only, no minor ticks ───────────────────────
 xtick.top: False
 ytick.right: False
 xtick.direction: out
@@ -13,62 +66,50 @@ xtick.major.size: 8
 ytick.major.size: 8
 xtick.major.width: 1.2
 ytick.major.width: 1.2
+xtick.minor.size: 4
+ytick.minor.size: 4
+xtick.minor.width: 0.8
+ytick.minor.width: 0.8
 
-# Axes — lighter frame, only bottom+left visible via edgecolor;
-# top/right spines will be removed by the style's intent (users can enforce
-# via ax.spines[['top','right']].set_visible(False) for full Tufte look)
-axes.edgecolor: 0.3
-axes.linewidth: 1.2
-axes.titlepad: 16
-axes.labelpad: 10
-axes.grid: False
-axes.spines.top: False
-axes.spines.right: False
-
-# Font
-axes.titlesize: 30
-font.size: 28
-font.family: sans-serif
-font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans,
-
-# Figure size and quality
-figure.figsize: 16, 10
-figure.frameon: False
-
-# Grid — disabled
+# ── Grid — disabled (values kept for consistency; see header) ────────────────
+grid.color: "#DDDDDD"
+grid.linestyle: -
+grid.linewidth: 0.8
 grid.alpha: 0.0
 
-# Legend — frameless to reduce ink
+# ── Legend — frameless to reduce ink ────────────────────────────────────────
 legend.frameon: False
+legend.framealpha: 0.9
+legend.facecolor: "#F5F5F5"
+legend.edgecolor: "#CCCCCC"
 legend.numpoints: 1
 legend.scatterpoints: 1
 legend.labelspacing: 0.4
-legend.fontsize: 22
 
-# Lines — slightly thinner, no caps clutter
-lines.markersize: 5
+# ── Lines & markers — slightly thinner, no cap clutter ──────────────────────
 lines.linewidth: 1.8
+lines.markersize: 5
 lines.solid_capstyle: butt
-
-# Errorbars
 errorbar.capsize: 0
 
+# ── Box plots ─ matplotlib defaults these to literal black, which is
+# invisible on the dark styles; median/mean already follow the cycle (C1/C2)
+boxplot.boxprops.color: "#333333"
+boxplot.whiskerprops.color: "#333333"
+boxplot.capprops.color: "#333333"
+boxplot.flierprops.color: "#333333"
+boxplot.flierprops.markeredgecolor: "#333333"
+
+# ── Text boxes — mirror the legend, so a text box and a legend match ────────
+patch.facecolor: "#F5F5F5"
+patch.edgecolor: "#CCCCCC"
+
+# ── Colors ──────────────────────────────────────────────────────────────────
 # Muted, accessible palette
 axes.prop_cycle: cycler('color', ['2166AC', 'D6604D', '4DAC26', 'F4A11D', '762A83', '1B7837'])
-
 image.cmap: viridis
-
 # Near-black text
 text.color: "#1A1A1A"
 axes.labelcolor: "#1A1A1A"
 xtick.color: "#333333"
 ytick.color: "#333333"
-
-# Clean white background
-figure.facecolor: "#ffffff"
-axes.facecolor: "#ffffff"
-savefig.facecolor: "#ffffff"
-
-# Text boxes — very light, minimal border
-patch.facecolor: "#F5F5F5"
-patch.edgecolor: "#CCCCCC"

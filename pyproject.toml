@@ -4,25 +4,35 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "komorebi_mpl"
-version = "0.0.5"
-description = "MPL Styler"
+version = "0.1.0"
+description = "A collection of matplotlib style sheets for scientific plots, built on one shared parameter template"
 authors = [{ name = "Sergei Kulkov", email = "sergei.kulkov23@gmail.com" }]
 license = { text = "MIT" }
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
+keywords = ["matplotlib", "style", "stylesheet", "plotting", "visualization"]
 classifiers = [
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Framework :: Matplotlib",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Visualization",
 ]
 
+# matplotlib 3.9 is the floor: earlier versions lack Axes.boxplot(tick_labels=...)
+# used by the examples, and the styles are only tested from 3.9 up.
 dependencies = [
-    "matplotlib>=3.5.0",
+    "matplotlib>=3.9.0",
     "numpy>=1.22.4",
 ]
+
+[project.urls]
+Homepage = "https://github.com/rngKomorebi/komorebi_mpl"
+Changelog = "https://github.com/rngKomorebi/komorebi_mpl/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,10 +1,51 @@
 # sci_pub — personal publication style.
-# White background, colorblind-safe palette anchored on rebeccapurple + darkorange.
-# Color order draws from Okabe-Ito for safe distinguishability across
-# protanopia, deuteranopia, and tritanopia.
-# Linestyle cycling provides a second differentiation axis (B&W-safe).
+# White background, colorblind-safe palette anchored on rebeccapurple +
+# darkorange. Color order draws from Okabe-Ito for safe distinguishability
+# across protanopia, deuteranopia, and tritanopia. Linestyle cycling provides
+# a second differentiation axis (B&W-safe).
+#
+# Every komorebi_mpl style declares the same parameters in the same section
+# order; only the values differ.
 
-# Ticks
+# ── Fonts ───────────────────────────────────────────────────────────────────
+# font.size is the base; the slots below are deliberately smaller so legends,
+# labels, ticks and annotations don't overwhelm the data. Free-floating text
+# boxes have no rcParam of their own, so code should use matplotlib *relative*
+# sizes ('small', 'x-small', ...) — fractions of this base, so they follow the
+# style too.
+font.size: 30
+axes.titlesize: 28
+axes.labelsize: 26
+xtick.labelsize: 22
+ytick.labelsize: 22
+legend.fontsize: 20
+figure.titlesize: 30
+font.family: sans-serif
+font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans
+
+# ── Figure ──────────────────────────────────────────────────────────────────
+figure.figsize: 16, 10
+figure.frameon: False
+figure.subplot.top: 0.94
+figure.subplot.right: 0.93
+figure.facecolor: "#FFFFFF"
+savefig.facecolor: "#FFFFFF"
+# figure.dpi: 100
+# savefig.dpi: 300
+# savefig.bbox: tight
+
+# ── Axes ────────────────────────────────────────────────────────────────────
+axes.facecolor: "#FFFFFF"
+axes.edgecolor: "black"
+axes.linewidth: 1.5
+axes.titlepad: 12
+axes.labelpad: 8
+axes.spines.top: True
+axes.spines.right: True
+axes.grid: True
+axes.grid.which: both
+
+# ── Ticks ───────────────────────────────────────────────────────────────────
 xtick.top: True
 ytick.right: True
 xtick.direction: in
@@ -20,47 +61,40 @@ ytick.minor.size: 5
 xtick.minor.width: 1.2
 ytick.minor.width: 1.2
 
-# Axes
-axes.edgecolor: "black"
-axes.linewidth: 1.5
-axes.titlepad: 12
-axes.labelpad: 8
-axes.grid: True
-axes.grid.which: both
-
-# Font
-axes.titlesize: 32
-font.size: 30
-font.family: sans-serif
-font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans,
-
-# Figure size and quality
-figure.figsize: 16, 10
-figure.frameon: False
-
-# Grid
-grid.alpha: 0.25
-grid.color: 0.75
+# ── Grid — light grey, faint ────────────────────────────────────────────────
+grid.color: "#BFBFBF"
 grid.linestyle: --
 grid.linewidth: 0.8
+grid.alpha: 0.25
 
-# Legend
+# ── Legend ──────────────────────────────────────────────────────────────────
 legend.frameon: True
-legend.edgecolor: 0.85
-legend.facecolor: 0.95
+legend.framealpha: 0.9
+legend.facecolor: "#F0ECF8"
+legend.edgecolor: "#663399"
 legend.numpoints: 1
 legend.scatterpoints: 1
 legend.labelspacing: 0.3
-legend.fontsize: 22
 
-# Lines
-lines.markersize: 7
+# ── Lines & markers ─────────────────────────────────────────────────────────
 lines.linewidth: 2.5
+lines.markersize: 7
 lines.solid_capstyle: round
-
-# Errorbars
 errorbar.capsize: 4
 
+# ── Box plots ─ matplotlib defaults these to literal black, which is
+# invisible on the dark styles; median/mean already follow the cycle (C1/C2)
+boxplot.boxprops.color: "black"
+boxplot.whiskerprops.color: "black"
+boxplot.capprops.color: "black"
+boxplot.flierprops.color: "black"
+boxplot.flierprops.markeredgecolor: "black"
+
+# ── Text boxes — mirror the legend, so a text box and a legend match ────────
+patch.facecolor: "#F0ECF8"
+patch.edgecolor: "#663399"
+
+# ── Colors ──────────────────────────────────────────────────────────────────
 # Colorblind-safe palette:
 #   663399  rebeccapurple   — primary
 #   FF8C00  darkorange      — secondary
@@ -69,20 +103,9 @@ errorbar.capsize: 4
 #   D55E00  Okabe-Ito vermillion (visually distinct from darkorange)
 #   CC79A7  Okabe-Ito reddish purple (visually distinct from rebeccapurple)
 axes.prop_cycle: (cycler('color', ['663399', 'FF8C00', '0072B2', '009E73', 'D55E00', 'CC79A7']) + cycler('linestyle', ['-', '-', '--', '--', '-.', '-.']) + cycler('marker', ['o', 's', 'D', '^', 'x', 'v']))
-
 image.cmap: viridis
-
 # Black text and axes
-text.color: 0
-axes.labelcolor: 0
-xtick.color: 0
-ytick.color: 0
-
-# White background
-figure.facecolor: "#ffffff"
-axes.facecolor: "#ffffff"
-savefig.facecolor: "#ffffff"
-
-# Text boxes
-patch.facecolor: "#F0ECF8"
-patch.edgecolor: "#663399"
+text.color: "black"
+axes.labelcolor: "black"
+xtick.color: "black"
+ytick.color: "black"

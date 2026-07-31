@@ -1,17 +1,17 @@
-# komorebi — 木漏れ日
-# The Japanese word for sunlight filtering through leaves:
-# the dappled interplay of warm light, shadow, and moving foliage.
+# daplis — house style for the LinoSPAD2 analysis package.
 #
-# Palette evokes a forest canopy scene:
-#   C8860A  deep gold       — warm sunlight shafts
-#   2D6A4F  forest green    — deep foliage
-#   4A86B8  sky blue        — glimpses of sky through the canopy
-#   A0522D  sienna          — bark and earth in warm afternoon light
-#   6BAA25  leaf green      — bright new leaves catching the light
-#   8B7BC8  soft lavender   — cool shadow light, dusk komorebi
+# Colors are chosen for colorblindness accessibility and publication quality.
+# The 8-color cycle maps onto the recurring roles in the daplis plots:
+#   0: rebeccapurple  (#663399) - primary data / histograms
+#   1: darkorange     (#FF8C00) - fits / overlaid curves
+#   2: teal           (#008080) - single-pixel histograms
+#   3: salmon         (#FA8072) - sensor population (full sensor)
+#   4: darkslateblue  (#483D8B) - DCR stability
+#   5: indianred      (#CD5C5C) - cross-talk error bars (single aggressor)
+#   6: darkred        (#8B0000) - cross-talk averages
+#   7: black          (#000000) - fit overlays / reference lines
 #
-# Background: warm parchment #FAF8F0 — like sunlight on a pale surface
-# filtered through leaves.
+# Override in a script with `komorebi_mpl.use("<other>")` (that always wins).
 #
 # Every komorebi_mpl style declares the same parameters in the same section
 # order; only the values differ.
@@ -37,15 +37,15 @@ figure.figsize: 16, 10
 figure.frameon: False
 figure.subplot.top: 0.94
 figure.subplot.right: 0.93
-figure.facecolor: "#FAF8F0"
-savefig.facecolor: "#FAF8F0"
+figure.facecolor: "#FFFFFF"
+savefig.facecolor: "#FFFFFF"
 # figure.dpi: 100
 # savefig.dpi: 300
 # savefig.bbox: tight
 
 # ── Axes ────────────────────────────────────────────────────────────────────
-axes.facecolor: "#FAF8F0"
-axes.edgecolor: "#5A5040"
+axes.facecolor: "#FFFFFF"
+axes.edgecolor: "black"
 axes.linewidth: 1.5
 axes.titlepad: 12
 axes.labelpad: 8
@@ -54,11 +54,11 @@ axes.spines.right: True
 axes.grid: True
 axes.grid.which: both
 
-# ── Ticks ───────────────────────────────────────────────────────────────────
+# ── Ticks — outward-facing, so they never sit on top of the data ────────────
 xtick.top: True
 ytick.right: True
-xtick.direction: in
-ytick.direction: in
+xtick.direction: out
+ytick.direction: out
 xtick.minor.visible: True
 ytick.minor.visible: True
 xtick.major.size: 10
@@ -70,17 +70,17 @@ ytick.minor.size: 5
 xtick.minor.width: 1.2
 ytick.minor.width: 1.2
 
-# ── Grid — warm, soft, like dappled shadow ──────────────────────────────────
-grid.color: "#C8B898"
+# ── Grid — light grey, faint ────────────────────────────────────────────────
+grid.color: "#BFBFBF"
 grid.linestyle: --
 grid.linewidth: 0.8
-grid.alpha: 0.35
+grid.alpha: 0.25
 
 # ── Legend ──────────────────────────────────────────────────────────────────
 legend.frameon: True
 legend.framealpha: 0.9
-legend.facecolor: "#EDE8D8"
-legend.edgecolor: "#C8860A"
+legend.facecolor: "#F0ECF8"
+legend.edgecolor: "#663399"
 legend.numpoints: 1
 legend.scatterpoints: 1
 legend.labelspacing: 0.3
@@ -93,22 +93,22 @@ errorbar.capsize: 4
 
 # ── Box plots ─ matplotlib defaults these to literal black, which is
 # invisible on the dark styles; median/mean already follow the cycle (C1/C2)
-boxplot.boxprops.color: "#2C2416"
-boxplot.whiskerprops.color: "#2C2416"
-boxplot.capprops.color: "#2C2416"
-boxplot.flierprops.color: "#2C2416"
-boxplot.flierprops.markeredgecolor: "#2C2416"
+boxplot.boxprops.color: "black"
+boxplot.whiskerprops.color: "black"
+boxplot.capprops.color: "black"
+boxplot.flierprops.color: "black"
+boxplot.flierprops.markeredgecolor: "black"
 
 # ── Text boxes — mirror the legend, so a text box and a legend match ────────
-patch.facecolor: "#EDE8D8"
-patch.edgecolor: "#C8860A"
+patch.facecolor: "#F0ECF8"
+patch.edgecolor: "#663399"
 
 # ── Colors ──────────────────────────────────────────────────────────────────
-# Forest canopy palette (see header for rationale)
-axes.prop_cycle: cycler('color', ['C8860A', '2D6A4F', '4A86B8', 'A0522D', '6BAA25', '8B7BC8'])
-image.cmap: YlGn
-# Warm dark charcoal text — softer than pure black, like ink on parchment
-text.color: "#2C2416"
-axes.labelcolor: "#2C2416"
-xtick.color: "#2C2416"
-ytick.color: "#2C2416"
+# Colorblind-accessible 8-color cycle (roles listed in the header)
+axes.prop_cycle: cycler('color', ['663399', 'FF8C00', '008080', 'FA8072', '483D8B', 'CD5C5C', '8B0000', '000000'])
+image.cmap: viridis
+# Black text
+text.color: "black"
+axes.labelcolor: "black"
+xtick.color: "black"
+ytick.color: "black"

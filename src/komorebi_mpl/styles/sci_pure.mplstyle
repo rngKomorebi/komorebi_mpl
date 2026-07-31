@@ -1,10 +1,62 @@
-# Ticks
+# sci_pure — clean, paper-ready plots: white background, vivid colors, and a
+# linestyle+marker cycle so figures also survive greyscale printing.
+#
+# Palette:
+#   E63946  red
+#   FF7F00  orange
+#   2ECC71  green
+#   1F77B4  blue
+#   8E44AD  violet
+#   000000  black
+#
+# Every komorebi_mpl style declares the same parameters in the same section
+# order; only the values differ.
+
+# ── Fonts ───────────────────────────────────────────────────────────────────
+# font.size is the base; the slots below are deliberately smaller so legends,
+# labels, ticks and annotations don't overwhelm the data. Free-floating text
+# boxes have no rcParam of their own, so code should use matplotlib *relative*
+# sizes ('small', 'x-small', ...) — fractions of this base, so they follow the
+# style too.
+font.size: 30
+axes.titlesize: 28
+axes.labelsize: 26
+xtick.labelsize: 22
+ytick.labelsize: 22
+legend.fontsize: 20
+figure.titlesize: 30
+font.family: sans-serif
+font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans
+
+# ── Figure ──────────────────────────────────────────────────────────────────
+figure.figsize: 16, 10
+figure.frameon: False
+figure.subplot.top: 0.94
+figure.subplot.right: 0.93
+figure.facecolor: "#FFFFFF"
+savefig.facecolor: "#FFFFFF"
+# figure.dpi: 100
+# savefig.dpi: 300
+# savefig.bbox: tight
+
+# ── Axes ────────────────────────────────────────────────────────────────────
+axes.facecolor: "#FFFFFF"
+axes.edgecolor: "black"
+axes.linewidth: 1.5
+axes.titlepad: 12
+axes.labelpad: 8
+axes.spines.top: True
+axes.spines.right: True
+axes.grid: True
+axes.grid.which: both
+
+# ── Ticks ───────────────────────────────────────────────────────────────────
 xtick.top: True
 ytick.right: True
 xtick.direction: in
 ytick.direction: in
-xtick.minor.visible : True
-ytick.minor.visible : True
+xtick.minor.visible: True
+ytick.minor.visible: True
 xtick.major.size: 10
 ytick.major.size: 10
 xtick.major.width: 2
@@ -14,66 +66,45 @@ ytick.minor.size: 5
 xtick.minor.width: 1.2
 ytick.minor.width: 1.2
 
-# Axes
-axes.linewidth : 1.5     # thickness of the frame
-axes.titlepad: 12
-axes.labelpad: 8
-axes.grid: True
-axes.grid.which: both
-
-# Font
-axes.titlesize: 32
-font.size: 30
-font.family : sans-serif
-font.sans-serif : sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans,
-
-# Figure size and quality
-# figure.dpi: 100
-# savefig.dpi: 300
-figure.figsize: 16, 10
-figure.frameon: False
-# figure.autolayout: True
-# savefig.bbox: tight
-
-# Grid
-grid.alpha: 0.3
-grid.color: 0.1
+# ── Grid — near-black, kept faint by the low alpha ──────────────────────────
+grid.color: "#1A1A1A"
 grid.linestyle: --
 grid.linewidth: 1
+grid.alpha: 0.3
 
-# Legend
+# ── Legend ──────────────────────────────────────────────────────────────────
 legend.frameon: True
-legend.edgecolor: 0.85
-legend.facecolor: 0.85
+legend.framealpha: 0.9
+legend.facecolor: "#E1E1E1"
+legend.edgecolor: "black"
 legend.numpoints: 1
 legend.scatterpoints: 1
 legend.labelspacing: 0.3
-legend.fontsize: 22
 
-# Lines
-lines.markersize : 6
+# ── Lines & markers ─────────────────────────────────────────────────────────
 lines.linewidth: 2
+lines.markersize: 6
 lines.solid_capstyle: round
-
-# Errorbars
 errorbar.capsize: 4
 
-# Vivid colors: 
-axes.prop_cycle: (cycler('color', ['E63946', 'FF7F00', '2ECC71', '1F77B4', '8E44AD', '000000']) + cycler('linestyle', ['-', '--', '-.', '-', '--', ':']) + cycler('marker', ['.', 'o', 's', 'D', '^', 'x']))
+# ── Box plots ─ matplotlib defaults these to literal black, which is
+# invisible on the dark styles; median/mean already follow the cycle (C1/C2)
+boxplot.boxprops.color: "black"
+boxplot.whiskerprops.color: "black"
+boxplot.capprops.color: "black"
+boxplot.flierprops.color: "black"
+boxplot.flierprops.markeredgecolor: "black"
 
-image.cmap: cividis
-
-# font color: very light grey
-text.color: 0
-axes.labelcolor: 0
-xtick.color: 0
-ytick.color: 0
-
-# background: bluish dark grey
-figure.facecolor: "ffffff"
-axes.facecolor: "ffffff"
-savefig.facecolor: "ffffff"
-
-# Text boxes
+# ── Text boxes — mirror the legend, so a text box and a legend match ────────
 patch.facecolor: "#E1E1E1"
 patch.edgecolor: "black"
+
+# ── Colors ──────────────────────────────────────────────────────────────────
+# Vivid palette + linestyle/marker cycling for greyscale safety
+axes.prop_cycle: (cycler('color', ['E63946', 'FF7F00', '2ECC71', '1F77B4', '8E44AD', '000000']) + cycler('linestyle', ['-', '--', '-.', '-', '--', ':']) + cycler('marker', ['.', 'o', 's', 'D', '^', 'x']))
+image.cmap: cividis
+# Black text
+text.color: "black"
+axes.labelcolor: "black"
+xtick.color: "black"
+ytick.color: "black"

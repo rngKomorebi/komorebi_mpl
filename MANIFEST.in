@@ -1,0 +1,3 @@
+include src/komorebi_mpl/styles/*.mplstyle
+include CHANGELOG.md
+include LICENSE

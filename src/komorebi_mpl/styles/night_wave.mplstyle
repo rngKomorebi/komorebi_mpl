@@ -1,10 +1,65 @@
-# Ticks
+# night_wave — dark background with neon lines; a synthwave vibe.
+# Heavily inspired by Dominik Haitz's 'mplcyberpunk'. Pairs with the helpers
+# in komorebi_mpl.functions.night_wave_func (glow, gradient fills).
+#
+# Neon palette:
+#   EB67F5  magenta
+#   88F7E2  aqua
+#   44D492  spring green
+#   F5EB67  electric yellow
+#   FFA15C  amber
+#   FA233E  hot red
+#
+# Background: bluish dark grey #221D2F.
+#
+# Every komorebi_mpl style declares the same parameters in the same section
+# order; only the values differ.
+
+# ── Fonts ───────────────────────────────────────────────────────────────────
+# font.size is the base; the slots below are deliberately smaller so legends,
+# labels, ticks and annotations don't overwhelm the data. Free-floating text
+# boxes have no rcParam of their own, so code should use matplotlib *relative*
+# sizes ('small', 'x-small', ...) — fractions of this base, so they follow the
+# style too.
+font.size: 30
+axes.titlesize: 28
+axes.labelsize: 26
+xtick.labelsize: 22
+ytick.labelsize: 22
+legend.fontsize: 20
+figure.titlesize: 30
+font.family: sans-serif
+font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans
+
+# ── Figure ──────────────────────────────────────────────────────────────────
+figure.figsize: 16, 10
+figure.frameon: False
+figure.subplot.top: 0.94
+figure.subplot.right: 0.93
+figure.facecolor: "#221D2F"
+savefig.facecolor: "#221D2F"
+# figure.dpi: 100
+# savefig.dpi: 300
+# savefig.bbox: tight
+
+# ── Axes ────────────────────────────────────────────────────────────────────
+axes.facecolor: "#221D2F"
+axes.edgecolor: "#BFBFBF"
+axes.linewidth: 1.5
+axes.titlepad: 12
+axes.labelpad: 8
+axes.spines.top: True
+axes.spines.right: True
+axes.grid: True
+axes.grid.which: both
+
+# ── Ticks ───────────────────────────────────────────────────────────────────
 xtick.top: True
 ytick.right: True
 xtick.direction: in
 ytick.direction: in
-xtick.minor.visible : True
-ytick.minor.visible : True
+xtick.minor.visible: True
+ytick.minor.visible: True
 xtick.major.size: 10
 ytick.major.size: 10
 xtick.major.width: 2
@@ -14,66 +69,45 @@ ytick.minor.size: 5
 xtick.minor.width: 1.2
 ytick.minor.width: 1.2
 
-# Axes
-axes.edgecolor : 0.75   # color of the frame (spines)
-axes.linewidth : 1.5     # thickness of the frame
-axes.titlepad: 12
-axes.labelpad: 8
-axes.grid: True
-axes.grid.which: both
-
-# Font
-axes.titlesize: 32
-font.size: 30
-font.family : sans-serif
-font.sans-serif : sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans,
-
-# Figure size and quality
-# figure.dpi: 100
-# savefig.dpi: 300
-figure.figsize: 16, 10
-figure.frameon: False
-# figure.autolayout: True
-# savefig.bbox: tight
-
-# Grid
-grid.alpha: 0.3
-grid.color: AAC7DF
+# ── Grid — cool pale blue, faint against the dark background ────────────────
+grid.color: "#AAC7DF"
 grid.linestyle: --
 grid.linewidth: 1
+grid.alpha: 0.3
 
-# Legend
+# ── Legend ──────────────────────────────────────────────────────────────────
 legend.frameon: True
-legend.edgecolor: "#221D2F"
-legend.facecolor: "#2D273F"
+legend.framealpha: 0.9
+legend.facecolor: "#382C47"
+legend.edgecolor: "#5E5278"
 legend.numpoints: 1
 legend.scatterpoints: 1
 legend.labelspacing: 0.3
-legend.fontsize: 22
 
-# Lines
-lines.markersize : 6
+# ── Lines & markers ─────────────────────────────────────────────────────────
 lines.linewidth: 2
+lines.markersize: 6
 lines.solid_capstyle: round
-
-# Errorbars
 errorbar.capsize: 4
 
-# neon colors: 
-axes.prop_cycle: cycler('color', ['eb67f5', '88F7E2', '44D492', 'F5EB67', 'FFA15C', 'FA233E'])
-image.cmap: plasma
+# ── Box plots ─ matplotlib defaults these to literal black, which is
+# invisible on the dark styles; median/mean already follow the cycle (C1/C2)
+boxplot.boxprops.color: "#F2F2F2"
+boxplot.whiskerprops.color: "#F2F2F2"
+boxplot.capprops.color: "#F2F2F2"
+boxplot.flierprops.color: "#F2F2F2"
+boxplot.flierprops.markeredgecolor: "#F2F2F2"
 
-# font color: very light grey
-text.color: 1
-axes.labelcolor: 1
-xtick.color: 0.95
-ytick.color: 0.95
-
-# background: bluish dark grey
-figure.facecolor: "#221D2F"
-axes.facecolor: "#221D2F"
-savefig.facecolor: "#221D2F"
-
-# Text boxes
+# ── Text boxes — mirror the legend, so a text box and a legend match ────────
 patch.facecolor: "#382C47"
-patch.edgecolor: "black"
+patch.edgecolor: "#5E5278"
+
+# ── Colors ──────────────────────────────────────────────────────────────────
+# Neon palette (see header)
+axes.prop_cycle: cycler('color', ['EB67F5', '88F7E2', '44D492', 'F5EB67', 'FFA15C', 'FA233E'])
+image.cmap: plasma
+# Near-white text on the dark background
+text.color: "#FFFFFF"
+axes.labelcolor: "#FFFFFF"
+xtick.color: "#F2F2F2"
+ytick.color: "#F2F2F2"

@@ -1,8 +1,52 @@
 # solarized — light variant of Ethan Schoonover's Solarized palette.
 # Warm off-white background, carefully harmonized accent hues.
 # Familiar to developers, easy on the eyes.
+#
+# Backgrounds are Solarized base3 (#FDF6E3, figure) and base2 (#EEE8D5, axes);
+# text is base00 (#657B83) with base0 (#839496) tick labels.
+#
+# Every komorebi_mpl style declares the same parameters in the same section
+# order; only the values differ.
 
-# Ticks
+# ── Fonts ───────────────────────────────────────────────────────────────────
+# font.size is the base; the slots below are deliberately smaller so legends,
+# labels, ticks and annotations don't overwhelm the data. Free-floating text
+# boxes have no rcParam of their own, so code should use matplotlib *relative*
+# sizes ('small', 'x-small', ...) — fractions of this base, so they follow the
+# style too.
+font.size: 30
+axes.titlesize: 28
+axes.labelsize: 26
+xtick.labelsize: 22
+ytick.labelsize: 22
+legend.fontsize: 20
+figure.titlesize: 30
+font.family: sans-serif
+font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans
+
+# ── Figure ──────────────────────────────────────────────────────────────────
+figure.figsize: 16, 10
+figure.frameon: False
+figure.subplot.top: 0.94
+figure.subplot.right: 0.93
+figure.facecolor: "#FDF6E3"
+savefig.facecolor: "#FDF6E3"
+# figure.dpi: 100
+# savefig.dpi: 300
+# savefig.bbox: tight
+
+# ── Axes ────────────────────────────────────────────────────────────────────
+axes.facecolor: "#EEE8D5"
+axes.edgecolor: "#93A1A1"
+axes.linewidth: 1.5
+axes.titlepad: 12
+axes.labelpad: 8
+axes.spines.top: True
+axes.spines.right: True
+axes.grid: True
+axes.grid.which: both
+
+# ── Ticks ───────────────────────────────────────────────────────────────────
 xtick.top: True
 ytick.right: True
 xtick.direction: in
@@ -18,63 +62,45 @@ ytick.minor.size: 5
 xtick.minor.width: 1.2
 ytick.minor.width: 1.2
 
-# Axes
-axes.edgecolor: "#93A1A1"
-axes.linewidth: 1.5
-axes.titlepad: 12
-axes.labelpad: 8
-axes.grid: True
-axes.grid.which: both
-
-# Font
-axes.titlesize: 32
-font.size: 30
-font.family: sans-serif
-font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans,
-
-# Figure size and quality
-figure.figsize: 16, 10
-figure.frameon: False
-
-# Grid — very subtle warm grey
-grid.alpha: 0.4
+# ── Grid — very subtle warm grey ────────────────────────────────────────────
 grid.color: "#D3CCB8"
 grid.linestyle: --
 grid.linewidth: 0.8
+grid.alpha: 0.4
 
-# Legend
+# ── Legend ──────────────────────────────────────────────────────────────────
 legend.frameon: True
+legend.framealpha: 0.9
+legend.facecolor: "#E8E2CF"
 legend.edgecolor: "#93A1A1"
-legend.facecolor: "#EEE8D5"
 legend.numpoints: 1
 legend.scatterpoints: 1
 legend.labelspacing: 0.3
-legend.fontsize: 22
 
-# Lines
-lines.markersize: 6
+# ── Lines & markers ─────────────────────────────────────────────────────────
 lines.linewidth: 2
+lines.markersize: 6
 lines.solid_capstyle: round
-
-# Errorbars
 errorbar.capsize: 4
 
+# ── Box plots ─ matplotlib defaults these to literal black, which is
+# invisible on the dark styles; median/mean already follow the cycle (C1/C2)
+boxplot.boxprops.color: "#839496"
+boxplot.whiskerprops.color: "#839496"
+boxplot.capprops.color: "#839496"
+boxplot.flierprops.color: "#839496"
+boxplot.flierprops.markeredgecolor: "#839496"
+
+# ── Text boxes — mirror the legend, so a text box and a legend match ────────
+patch.facecolor: "#E8E2CF"
+patch.edgecolor: "#93A1A1"
+
+# ── Colors ──────────────────────────────────────────────────────────────────
 # Solarized accent colors (official palette by Ethan Schoonover)
 axes.prop_cycle: cycler('color', ['268BD2', 'DC322F', '859900', 'D33682', '2AA198', 'CB4B16', '6C71C4', 'B58900'])
-
 image.cmap: YlOrRd
-
-# Solarized base00 (#657B83) for text — dark on light
+# Solarized base00 for text, base0 for tick labels — dark on light
 text.color: "#657B83"
 axes.labelcolor: "#657B83"
 xtick.color: "#839496"
 ytick.color: "#839496"
-
-# Solarized base3 / base2 backgrounds
-figure.facecolor: "#FDF6E3"
-axes.facecolor: "#EEE8D5"
-savefig.facecolor: "#FDF6E3"
-
-# Text boxes
-patch.facecolor: "#E8E2CF"
-patch.edgecolor: "#93A1A1"

@@ -1,8 +1,52 @@
 # sci_print — black-and-white only, for greyscale journal figures.
 # All series distinguished by linestyle + marker, so figures survive
 # greyscale printing without any colour information.
+#
+# Text boxes and legends are white with a black border: minimum ink, maximum
+# contrast, and identical in print and on screen.
+#
+# Every komorebi_mpl style declares the same parameters in the same section
+# order; only the values differ.
 
-# Ticks
+# ── Fonts ───────────────────────────────────────────────────────────────────
+# font.size is the base; the slots below are deliberately smaller so legends,
+# labels, ticks and annotations don't overwhelm the data. Free-floating text
+# boxes have no rcParam of their own, so code should use matplotlib *relative*
+# sizes ('small', 'x-small', ...) — fractions of this base, so they follow the
+# style too.
+font.size: 30
+axes.titlesize: 28
+axes.labelsize: 26
+xtick.labelsize: 22
+ytick.labelsize: 22
+legend.fontsize: 20
+figure.titlesize: 30
+font.family: sans-serif
+font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans
+
+# ── Figure ──────────────────────────────────────────────────────────────────
+figure.figsize: 16, 10
+figure.frameon: False
+figure.subplot.top: 0.94
+figure.subplot.right: 0.93
+figure.facecolor: "#FFFFFF"
+savefig.facecolor: "#FFFFFF"
+# figure.dpi: 100
+# savefig.dpi: 300
+# savefig.bbox: tight
+
+# ── Axes ────────────────────────────────────────────────────────────────────
+axes.facecolor: "#FFFFFF"
+axes.edgecolor: "black"
+axes.linewidth: 1.5
+axes.titlepad: 12
+axes.labelpad: 8
+axes.spines.top: True
+axes.spines.right: True
+axes.grid: True
+axes.grid.which: both
+
+# ── Ticks ───────────────────────────────────────────────────────────────────
 xtick.top: True
 ytick.right: True
 xtick.direction: in
@@ -18,64 +62,46 @@ ytick.minor.size: 5
 xtick.minor.width: 1.2
 ytick.minor.width: 1.2
 
-# Axes
-axes.edgecolor: "black"
-axes.linewidth: 1.5
-axes.titlepad: 12
-axes.labelpad: 8
-axes.grid: True
-axes.grid.which: both
-
-# Font
-axes.titlesize: 32
-font.size: 30
-font.family: sans-serif
-font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans,
-
-# Figure size and quality
-figure.figsize: 16, 10
-figure.frameon: False
-
-# Grid
-grid.alpha: 0.25
-grid.color: 0.15
+# ── Grid — dotted and faint, so it never competes with the data ─────────────
+grid.color: "#262626"
 grid.linestyle: :
 grid.linewidth: 0.8
+grid.alpha: 0.25
 
-# Legend
+# ── Legend ──────────────────────────────────────────────────────────────────
 legend.frameon: True
-legend.edgecolor: 0.6
-legend.facecolor: 1.0
+legend.framealpha: 0.9
+legend.facecolor: "#FFFFFF"
+legend.edgecolor: "black"
 legend.numpoints: 1
 legend.scatterpoints: 1
 legend.labelspacing: 0.3
-legend.fontsize: 22
 
-# Lines
-lines.markersize: 7
+# ── Lines & markers ─────────────────────────────────────────────────────────
 lines.linewidth: 2
+lines.markersize: 7
 lines.solid_capstyle: round
-
-# Errorbars
 errorbar.capsize: 4
 
+# ── Box plots ─ matplotlib defaults these to literal black, which is
+# invisible on the dark styles; median/mean already follow the cycle (C1/C2)
+boxplot.boxprops.color: "black"
+boxplot.whiskerprops.color: "black"
+boxplot.capprops.color: "black"
+boxplot.flierprops.color: "black"
+boxplot.flierprops.markeredgecolor: "black"
+
+# ── Text boxes — mirror the legend, so a text box and a legend match ────────
+patch.facecolor: "#FFFFFF"
+patch.edgecolor: "black"
+
+# ── Colors ──────────────────────────────────────────────────────────────────
 # Greyscale color + distinct linestyle + marker cycle.
 # Every series is uniquely identifiable by linestyle alone OR marker alone.
 axes.prop_cycle: (cycler('color', ['000000', '000000', '000000', '000000', '000000', '000000']) + cycler('linestyle', ['-', '--', '-', '-.', '--', ':']) + cycler('marker', ['o', 's', 'D', '^', 'x', 'v']))
-
 image.cmap: Greys
-
 # Black text
-text.color: 0
-axes.labelcolor: 0
-xtick.color: 0
-ytick.color: 0
-
-# White background
-figure.facecolor: "#ffffff"
-axes.facecolor: "#ffffff"
-savefig.facecolor: "#ffffff"
-
-# Text boxes
-patch.facecolor: "#E8E8E8"
-patch.edgecolor: "black"
+text.color: "black"
+axes.labelcolor: "black"
+xtick.color: "black"
+ytick.color: "black"

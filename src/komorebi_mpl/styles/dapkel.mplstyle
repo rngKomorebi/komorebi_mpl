@@ -1,17 +1,15 @@
-# komorebi — 木漏れ日
-# The Japanese word for sunlight filtering through leaves:
-# the dappled interplay of warm light, shadow, and moving foliage.
+# dapkel — greenish-bluish house style for the Kelpie analysis package.
 #
-# Palette evokes a forest canopy scene:
-#   C8860A  deep gold       — warm sunlight shafts
-#   2D6A4F  forest green    — deep foliage
-#   4A86B8  sky blue        — glimpses of sky through the canopy
-#   A0522D  sienna          — bark and earth in warm afternoon light
-#   6BAA25  leaf green      — bright new leaves catching the light
-#   8B7BC8  soft lavender   — cool shadow light, dusk komorebi
+# Values collected from the dapkel modules (font.size 30, 16x10 line/dist
+# figures, in-pointing ticks) and unified onto a green->blue palette. The
+# earlier ad-hoc colormaps (viridis / inferno / PuBuGn_r) are superseded here
+# by a single green-blue `image.cmap`; the exact palette is provisional and
+# will be pinned down later.
 #
-# Background: warm parchment #FAF8F0 — like sunlight on a pale surface
-# filtered through leaves.
+# Square heatmaps (hitmap, DCR, cross-talk) set their own figsize in code, so
+# figure.figsize below only drives the line/distribution/histogram plots.
+#
+# Override in a script with `komorebi_mpl.use("<other>")` (that always wins).
 #
 # Every komorebi_mpl style declares the same parameters in the same section
 # order; only the values differ.
@@ -32,20 +30,20 @@ figure.titlesize: 30
 font.family: sans-serif
 font.sans-serif: sans-serif, Arial, Liberation Sans, DejaVu Sans, Bitstream Vera Sans
 
-# ── Figure ──────────────────────────────────────────────────────────────────
+# ── Figure (line / distribution plots; square maps override in code) ─────────
 figure.figsize: 16, 10
 figure.frameon: False
 figure.subplot.top: 0.94
 figure.subplot.right: 0.93
-figure.facecolor: "#FAF8F0"
-savefig.facecolor: "#FAF8F0"
+figure.facecolor: "#FFFFFF"
+savefig.facecolor: "#FFFFFF"
 # figure.dpi: 100
 # savefig.dpi: 300
 # savefig.bbox: tight
 
 # ── Axes ────────────────────────────────────────────────────────────────────
-axes.facecolor: "#FAF8F0"
-axes.edgecolor: "#5A5040"
+axes.facecolor: "#FFFFFF"
+axes.edgecolor: "#2F3A3A"
 axes.linewidth: 1.5
 axes.titlepad: 12
 axes.labelpad: 8
@@ -54,7 +52,7 @@ axes.spines.right: True
 axes.grid: True
 axes.grid.which: both
 
-# ── Ticks ───────────────────────────────────────────────────────────────────
+# ── Ticks — inward, with minor ticks ────────────────────────────────────────
 xtick.top: True
 ytick.right: True
 xtick.direction: in
@@ -70,17 +68,17 @@ ytick.minor.size: 5
 xtick.minor.width: 1.2
 ytick.minor.width: 1.2
 
-# ── Grid — warm, soft, like dappled shadow ──────────────────────────────────
-grid.color: "#C8B898"
+# ── Grid (used by the plots that call ax.grid; heatmaps do not) ──────────────
+grid.color: "#B7C9C9"
 grid.linestyle: --
 grid.linewidth: 0.8
-grid.alpha: 0.35
+grid.alpha: 0.6
 
 # ── Legend ──────────────────────────────────────────────────────────────────
 legend.frameon: True
 legend.framealpha: 0.9
-legend.facecolor: "#EDE8D8"
-legend.edgecolor: "#C8860A"
+legend.facecolor: "#E8F0F0"
+legend.edgecolor: "#B7C9C9"
 legend.numpoints: 1
 legend.scatterpoints: 1
 legend.labelspacing: 0.3
@@ -93,22 +91,22 @@ errorbar.capsize: 4
 
 # ── Box plots ─ matplotlib defaults these to literal black, which is
 # invisible on the dark styles; median/mean already follow the cycle (C1/C2)
-boxplot.boxprops.color: "#2C2416"
-boxplot.whiskerprops.color: "#2C2416"
-boxplot.capprops.color: "#2C2416"
-boxplot.flierprops.color: "#2C2416"
-boxplot.flierprops.markeredgecolor: "#2C2416"
+boxplot.boxprops.color: "#1E2A2A"
+boxplot.whiskerprops.color: "#1E2A2A"
+boxplot.capprops.color: "#1E2A2A"
+boxplot.flierprops.color: "#1E2A2A"
+boxplot.flierprops.markeredgecolor: "#1E2A2A"
 
 # ── Text boxes — mirror the legend, so a text box and a legend match ────────
-patch.facecolor: "#EDE8D8"
-patch.edgecolor: "#C8860A"
+patch.facecolor: "#E8F0F0"
+patch.edgecolor: "#B7C9C9"
 
 # ── Colors ──────────────────────────────────────────────────────────────────
-# Forest canopy palette (see header for rationale)
-axes.prop_cycle: cycler('color', ['C8860A', '2D6A4F', '4A86B8', 'A0522D', '6BAA25', '8B7BC8'])
-image.cmap: YlGn
-# Warm dark charcoal text — softer than pure black, like ink on parchment
-text.color: "#2C2416"
-axes.labelcolor: "#2C2416"
-xtick.color: "#2C2416"
-ytick.color: "#2C2416"
+# Green -> blue palette (lines, bars) and heatmap colormap
+axes.prop_cycle: cycler('color', ['2A6F97', '52B788', '168AAD', '2A9D8F', '76C893', '287271'])
+image.cmap: YlGnBu
+# Dark green-grey text — softer than pure black
+text.color: "#1E2A2A"
+axes.labelcolor: "#1E2A2A"
+xtick.color: "#1E2A2A"
+ytick.color: "#1E2A2A"
