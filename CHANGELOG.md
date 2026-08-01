@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2026-07-30
+## [0.1.0] - 2026-08-02
 
 Every style sheet rebuilt onto one shared parameter template, two new styles,
 and a set of fixes for places where matplotlib's hardcoded colours were leaking
-through and breaking the darker styles.
+through and breaking the darker styles. Releases are now cut from a GitHub
+release and published to PyPI automatically.
 
 **This release changes how existing styles render.** Tick labels, titles and
 legends are smaller, and several box and border colours moved. Pin `0.0.5` if
@@ -31,10 +32,28 @@ you need the previous look.
 - Test suite (`tests/test_styles.py`) asserting the template invariants: every
   sheet declares the same parameters in the same order, applies without
   warnings, keeps text boxes and legends in agreement, and draws nothing that
-  vanishes into its own background. Run on 3.9 / 3.11 / 3.13 in CI.
+  vanishes into its own background. Run on Linux and Windows across 3.9 – 3.13
+  in CI.
 - `docs/gallery/` with a comparison grid across all styles and a four-plot card
   per style, rebuilt by `python examples/style_showcase.py --gallery`.
 - `CHANGELOG.md`, `[project.urls]`, keywords and trove classifiers.
+- **Automated PyPI publishing.** Publishing a GitHub release runs
+  `.github/workflows/publish.yml`, which refuses the tag unless this file has a
+  matching section, runs the tests, builds, checks the built version against
+  the tag, uploads via trusted publishing (OIDC — no API token in the repo),
+  and fills the release body from these notes.
+- `tools/changelog.py` and `tools/release.py`. The first extracts one release's
+  notes and is what the publish gate calls; the second promotes an
+  `[Unreleased]` section to a numbered, dated one so the notes exist *before*
+  the tag does. `tests/test_changelog.py` and `tests/test_release_tool.py`
+  make both checkable locally instead of only at release time.
+- `komorebi_mpl.__version__`, read from the installed distribution metadata.
+  Nothing in the repository records a version any more, so this is the only way
+  to read one back.
+- `tests/test_api_surface.py`, guarding the shape of the package: `__all__`
+  stays in step with what is defined, the documented entry points stay
+  callable, and every subpackage keeps the `__init__.py` that decides whether
+  it ships at all.
 
 ### Changed
 
@@ -59,6 +78,19 @@ you need the previous look.
   `examples/figures/showcase/<style>/`, the same 14 filenames in each so styles
   can be diffed by opening the same name twice, a contact sheet per style, and
   fixed-seed data so every style plots identical numbers.
+- **The version comes from the git tag**, via `setuptools_scm`. Cutting a
+  release is creating the tag; no file needs editing. Only well-formed `v0.1.0`
+  tags are matched, so the stray `v.0.0.3` in this repository's history no
+  longer aborts a build.
+- CI installs the package with a new `dev` extra (`pytest`, `ruff`, `build`,
+  `twine`), lints with `ruff`, and covers Linux and Windows on 3.9 – 3.13 —
+  every version the classifiers claim, rather than the previous three on Linux
+  only.
+- `night_wave_func` cleaned up to pass that lint: builtin generics in place of
+  `typing.List` / `typing.Tuple`, and the alpha ramp in `add_gradient_fill`
+  computed directly instead of through two lambdas. No change in output — the
+  ramp is now evaluated only on the branches that use it, so
+  `gradient_start="zero"` still never divides by the span.
 
 ### Fixed
 
@@ -75,6 +107,19 @@ you need the previous look.
 - Stale comments describing colours the styles no longer used — `sci_faded` and
   `sci_pure` documented "very light grey" text over black and a "bluish dark
   grey" background over parchment.
+- **`komorebi_mpl.functions` was about to vanish from the wheel.** The
+  directory had no `__init__.py`, so it survived only as an implicit namespace
+  package — importable from a source checkout and missing once installed. It is
+  a real package now, and a test fails if either subpackage loses its
+  `__init__.py` again.
+- **`pip install .` failed outright** with "`project.license` must be string":
+  `license-files` was paired with the superseded `license = { text = "MIT" }`
+  table form. Now an SPDX expression, as PEP 639 requires.
+- `add_gradient_fill` rejected any `float` subclass — `numpy` scalars included —
+  for `alpha_gradientglow`, because it compared `type(x) == float` instead of
+  using `isinstance`. It also accepted a tuple of the wrong length and only
+  failed later, on the unpack; the length is checked up front now, where the
+  error message can name the problem.
 
 ### Known matplotlib limitations
 

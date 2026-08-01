@@ -164,7 +164,7 @@ plt.style.use("night_wave")
 np.random.seed(10)
 
 plt.subplots()
-for i in range(5):
+for _ in range(5):
     plt.scatter(np.random.rand(20), np.random.rand(20), marker="s", s=50)
     night_wave_func.make_scatter_glow()
 

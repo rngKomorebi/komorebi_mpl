@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=70.0", "wheel"]
+requires = ["setuptools>=77", "wheel", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,10 @@ name = "komorebi_mpl"
 dynamic = ["version"]
 description = "A collection of matplotlib style sheets for scientific plots, built on one shared parameter template"
 authors = [{ name = "Sergei Kulkov", email = "sergei.kulkov23@gmail.com" }]
-license = { text = "MIT" }
+# PEP 639: an SPDX expression, not a table. Pairing `license-files` with the
+# old `{ text = ... }` form is what setuptools rejects with
+# "`project.license` must be string".
+license = "MIT"
 license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.9"
@@ -30,12 +33,66 @@ dependencies = [
     "numpy>=1.22.4",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "ruff>=0.6",
+    "build>=1.2",
+    "twine>=5",
+]
+
 [project.urls]
 Homepage = "https://github.com/rngKomorebi/komorebi_mpl"
+Repository = "https://github.com/rngKomorebi/komorebi_mpl"
+Issues = "https://github.com/rngKomorebi/komorebi_mpl/issues"
 Changelog = "https://github.com/rngKomorebi/komorebi_mpl/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+# Without this, setuptools treats any __init__-less directory under src as a
+# namespace package, which sweeps stale *.egg-info dirs into the distribution.
+namespaces = false
 
 [tool.setuptools.package-data]
 komorebi_mpl = ["styles/*.mplstyle"]
+
+[tool.setuptools_scm]
+# The version comes from the git tag. Only match well-formed release tags
+# ("v0.1.0"): the stray "v.0.0.3" tag in this repo's history otherwise aborts
+# the build outright with "Can't parse version from tag".
+git_describe_command = [
+    "git", "describe", "--dirty", "--tags", "--long", "--match", "v[0-9]*",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+src = ["src", "tests", "tools"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # import sorting
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "D",    # pydocstyle - every public function keeps its docstring
+]
+ignore = [
+    "D105",  # magic methods need no docstring
+    "D107",  # __init__ is documented on the class
+    "D203",  # incompatible with D211
+    "D213",  # incompatible with D212
+    "E501",  # line length is handled by the formatter
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+# Tests document themselves through their names; docstrings are optional.
+"tests/*" = ["D103"]
+# The examples are read as scripts, not as library code.
+"examples/*" = ["D100", "D103"]

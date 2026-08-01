@@ -1,18 +1,17 @@
 """Structural guards on the package's public API.
 
-These tests do not check any physics - they check that the *shape* of the
-package holds as it grows. Two failure modes are guarded:
+These tests check nothing about how a plot *looks* - they check that the
+*shape* of the package holds as it grows. Three failure modes are guarded:
 
-    1. A public function gets added (or renamed) without being declared in the
-       module's ``__all__``, so the declared surface silently drifts from the
-       real one.
+    1. A public function gets added (or renamed) without being declared in
+       ``__all__``, so the declared surface silently drifts from the real one.
 
-    2. The same helper gets copy-pasted into a second analysis module instead
-       of being lifted into the shared core. This is how the package ended up
-       with four copies of '_frames_in_file' and three copies of the heatmap
-       plotting skeleton; the test makes the regression loud.
+    2. A helper module stops being reachable under ``komorebi_mpl.functions``,
+       which is the import path the README documents.
 
-See 'docs/adding_an_analysis.md' for the contract these enforce.
+    3. The subpackages lose their ``__init__.py`` and become implicit
+       namespace packages, which ``[tool.setuptools.packages.find]
+       namespaces = false`` then quietly drops from the built wheel.
 """
 
 from __future__ import annotations
@@ -22,27 +21,19 @@ import pathlib
 
 import pytest
 
-FUNCTIONS_DIR = (
-    pathlib.Path(__file__).resolve().parents[1] / "src" / "dapkel" / "functions"
+PACKAGE_DIR = (
+    pathlib.Path(__file__).resolve().parents[1] / "src" / "komorebi_mpl"
 )
+FUNCTIONS_DIR = PACKAGE_DIR / "functions"
 
-# The analysis modules, in stage order. 'unpack' is stage 0 and shared by all
-# of them, so it is excluded from the duplicate-name check below.
-ANALYSIS_MODULES = [
-    "calc_diff",
-    "data_quality",
-    "dcr_analysis",
-    "crosstalk_analysis",
-    "hitmap_analysis",
-    "tdc_calibration",
-    "delta_t",
-]
-
-ALL_MODULES = ["unpack", *ANALYSIS_MODULES]
+# The optional plotting helpers, by module name. Add new ones here and to
+# 'komorebi_mpl/functions/__init__.py' at the same time - the reexport test
+# below fails if the two lists drift apart.
+HELPER_MODULES = ["night_wave_func"]
 
 
-def _parse(module: str) -> ast.Module:
-    return ast.parse((FUNCTIONS_DIR / f"{module}.py").read_text(encoding="utf-8"))
+def _parse(path: pathlib.Path) -> ast.Module:
+    return ast.parse(path.read_text(encoding="utf-8"))
 
 
 def _declared(tree: ast.Module) -> list[str]:
@@ -55,112 +46,103 @@ def _declared(tree: ast.Module) -> list[str]:
     return []
 
 
-def _defined_public(tree: ast.Module) -> set[str]:
-    """Public names *defined in this module* (not imported into it)."""
-    names: set[str] = set()
-    for node in tree.body:
-        if isinstance(node, ast.FunctionDef) and not node.name.startswith("_"):
-            names.add(node.name)
-        elif isinstance(node, ast.Assign):
-            for target in node.targets:
-                name = getattr(target, "id", None)
-                if name and not name.startswith("_") and name != "__all__":
-                    names.add(name)
-    return names
+def _defined_public_functions(tree: ast.Module) -> set[str]:
+    """Public functions *defined in this module* (not imported into it)."""
+    return {
+        node.name
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and not node.name.startswith("_")
+    }
 
 
-def _top_level_functions(tree: ast.Module) -> set[str]:
-    return {n.name for n in tree.body if isinstance(n, ast.FunctionDef)}
-
-
-@pytest.mark.parametrize("module", ALL_MODULES)
-def test_all_declares_every_public_name(module: str) -> None:
-    """``__all__`` must list exactly the public names the module defines."""
-    tree = _parse(module)
+def test_top_level_all_declares_every_public_function() -> None:
+    """``komorebi_mpl.__all__`` must list exactly the functions it defines."""
+    tree = _parse(PACKAGE_DIR / "__init__.py")
     declared = set(_declared(tree))
-    defined = _defined_public(tree)
+    defined = _defined_public_functions(tree)
 
-    assert declared, f"{module} has no __all__"
+    assert declared, "komorebi_mpl has no __all__"
     assert not (defined - declared), (
-        f"{module}: public but missing from __all__: {sorted(defined - declared)}. "
+        f"public but missing from __all__: {sorted(defined - declared)}. "
         f"Add them, or make them private with a leading underscore."
     )
     assert not (declared - defined), (
-        f"{module}: in __all__ but not defined here: {sorted(declared - defined)}. "
+        f"in __all__ but not defined here: {sorted(declared - defined)}. "
         f"Re-exporting another module's name hides where it really lives."
     )
 
 
-def test_no_duplicated_functions_across_analyses() -> None:
-    """No function name may be defined in two analysis modules.
+def test_documented_entry_points_are_importable() -> None:
+    """The names the README tells people to call must actually be there."""
+    import komorebi_mpl
 
-    A name defined twice means the implementation was copied. Lift it into the
-    shared core instead and import it from there.
+    for name in ("apply", "apply_default", "style_path", "unlock", "use"):
+        assert callable(getattr(komorebi_mpl, name, None)), (
+            f"komorebi_mpl.{name} is documented but not callable"
+        )
+
+
+def test_version_is_exposed() -> None:
+    """setuptools_scm supplies the version; the package must surface it."""
+    import komorebi_mpl
+
+    assert isinstance(komorebi_mpl.__version__, str)
+    assert komorebi_mpl.__version__
+
+
+@pytest.mark.parametrize("subpackage", ["", "functions"])
+def test_every_subpackage_is_a_real_package(subpackage: str) -> None:
+    """An implicit namespace package is silently dropped from the wheel.
+
+    ``[tool.setuptools.packages.find] namespaces = false`` only collects
+    directories carrying an ``__init__.py``, so a missing one ships a wheel
+    that imports fine from the source tree and fails once installed.
     """
-    owners: dict[str, list[str]] = {}
-    for module in ANALYSIS_MODULES:
-        for name in _top_level_functions(_parse(module)):
-            owners.setdefault(name, []).append(module)
-
-    duplicated = {n: m for n, m in owners.items() if len(m) > 1}
-    assert not duplicated, (
-        "These functions are defined in more than one analysis module - lift "
-        "them into the shared core and import instead of copying:\n"
-        + "\n".join(f"  {n}: {', '.join(m)}" for n, m in sorted(duplicated.items()))
-    )
+    init = PACKAGE_DIR / subpackage / "__init__.py"
+    assert init.is_file(), f"{init.parent} has no __init__.py"
 
 
-def test_functions_package_reexports_every_analysis_module() -> None:
-    """``dapkel.functions.__all__`` must list every analysis module."""
-    from dapkel import functions
+def test_functions_package_reexports_every_helper() -> None:
+    """``komorebi_mpl.functions.__all__`` must list every helper module."""
+    from komorebi_mpl import functions
 
-    assert set(functions.__all__) == set(ALL_MODULES), (
-        f"dapkel.functions.__all__ is {sorted(functions.__all__)}, "
-        f"expected {sorted(ALL_MODULES)}"
+    assert set(functions.__all__) == set(HELPER_MODULES), (
+        f"komorebi_mpl.functions.__all__ is {sorted(functions.__all__)}, "
+        f"expected {sorted(HELPER_MODULES)}"
     )
     for module in functions.__all__:
         assert hasattr(functions, module), f"{module} is declared but not imported"
 
 
-@pytest.mark.parametrize("module", ALL_MODULES)
-def test_no_cross_module_private_imports(module: str) -> None:
-    """A module must not import another dapkel module's private names.
+def test_helper_modules_on_disk_match_the_declared_list() -> None:
+    """A helper dropped into 'functions/' without being declared is invisible."""
+    on_disk = {
+        path.stem
+        for path in FUNCTIONS_DIR.glob("*.py")
+        if not path.stem.startswith("_")
+    }
+    assert on_disk == set(HELPER_MODULES), (
+        f"'functions/' holds {sorted(on_disk)}, but HELPER_MODULES says "
+        f"{sorted(HELPER_MODULES)}. Keep the two in step."
+    )
+
+
+@pytest.mark.parametrize("module", HELPER_MODULES)
+def test_helpers_do_not_reach_into_private_names(module: str) -> None:
+    """A helper must not import another module's private names.
 
     Reaching for someone else's ``_helper`` means the helper is really shared
-    API and belongs in the core.
+    API and belongs somewhere both modules can import it from.
     """
-    tree = _parse(module)
+    tree = _parse(FUNCTIONS_DIR / f"{module}.py")
     offenders = [
         f"{node.module}.{alias.name}"
         for node in ast.walk(tree)
-        if isinstance(node, ast.ImportFrom) and (node.module or "").startswith("dapkel")
+        if isinstance(node, ast.ImportFrom)
+        and (node.module or "").startswith("komorebi_mpl")
         for alias in node.names
         if alias.name.startswith("_")
     ]
     assert not offenders, (
-        f"{module} imports private names from other dapkel modules: {offenders}. "
-        f"Promote them into the shared core instead."
-    )
-
-
-def test_no_hand_built_artifact_paths() -> None:
-    """Artifact locations must come from 'core.store', not string joins.
-
-    The package previously scattered stage-1 data across 'senpop_data/',
-    'delta_ts_data/' and 'results/tdc_calibration/', with no rule about what
-    belonged where. Everything now routes through 'store.processed_dir' /
-    'store.results_dir', so the layout is decided in exactly one place.
-    """
-    banned = ('"results"', "'results'", "senpop_data", "delta_ts_data")
-    offenders: list[str] = []
-    for module in ALL_MODULES:
-        src = (FUNCTIONS_DIR / f"{module}.py").read_text(encoding="utf-8")
-        for lineno, line in enumerate(src.split("\n"), start=1):
-            code = line.split("#")[0]
-            if "os.path.join" in code and any(b in code for b in banned):
-                offenders.append(f"{module}.py:{lineno}: {line.strip()}")
-
-    assert not offenders, (
-        "Artifact paths must come from core.store (processed_dir / "
-        "results_dir), not hand-built joins:\n  " + "\n  ".join(offenders)
+        f"{module} imports private names from other modules: {offenders}."
     )

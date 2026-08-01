@@ -786,7 +786,7 @@ GRID_DPI = 70
 
 
 def _grid_tile(style: str) -> str:
-    """A compact, title-less version of the line plot for the comparison grid.
+    """Draw a compact, title-less line plot for the comparison grid.
 
     The montage puts the style name above each tile, so an axes title here
     would just repeat it and eat space that the palette should be using.

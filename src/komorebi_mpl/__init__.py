@@ -1,9 +1,26 @@
+"""Matplotlib style sheets for scientific plots, built on one template.
+
+Importing the package registers every bundled sheet with matplotlib, so they
+show up in ``matplotlib.style.available`` and work with ``plt.style.use``.
+Prefer :func:`use` in scripts and :func:`apply_default` in libraries - the
+latter steps aside once the user has made an explicit choice.
+"""
+
 import os
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import matplotlib.style as style
 from matplotlib import rc_params_from_file
+
+__all__ = ["apply", "apply_default", "style_path", "unlock", "use"]
+
+try:
+    __version__ = _pkg_version("komorebi_mpl")
+except PackageNotFoundError:  # running from a source tree that was never installed
+    __version__ = "0.0.0.dev0"
 
 # Path to the 'styles' folder inside the package
 _styles_dir = os.path.join(os.path.dirname(__file__), "styles")

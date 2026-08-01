@@ -1,8 +1,13 @@
-"""Function for manipulating line, scatter, bar, and histogram plots,
-adding glow to each line or point and/or gradient.
+"""Glow and gradient effects for line, scatter, bar and histogram plots.
+
+Each helper redraws artists already present on an axes, so call them after
+plotting and before saving. Built for the ``night_wave`` style, but they work
+on any of the bundled sheets.
 """
 
-from typing import List, Optional, Tuple, Union
+# PEP 585 builtin generics ('list[Line2D]') are used directly: they are valid
+# at runtime from Python 3.9 on, which is this package's floor.
+from typing import Optional, Union
 
 import matplotlib as mpl
 import matplotlib.colors as mcolors
@@ -12,12 +17,17 @@ from matplotlib.lines import Line2D
 from matplotlib.path import Path
 
 
+def _identity(x):
+    """Return ``x`` unchanged - the no-op stand-in for ``np.log``."""
+    return x
+
+
 def make_lines_glow(
     ax: Optional[plt.Axes] = None,
     n_glow_lines: int = 20,
     diff_linewidth: float = 1.05,
     alpha_line: float = 0.3,
-    lines: Union[Line2D, List[Line2D]] = None,
+    lines: Union[Line2D, list[Line2D]] = None,
 ) -> None:
     """
     Add a glow effect to lines in a Matplotlib axes.
@@ -43,7 +53,6 @@ def make_lines_glow(
         Specific line(s) to apply the glow effect to. Defaults to all
         lines in the axes.
     """
-
     if ax is None:
         ax = plt.gca()
 
@@ -76,7 +85,7 @@ def make_lines_glow(
 
 def add_gradient_fill(
     ax: Optional[plt.Axes] = None,
-    alpha_gradientglow: Union[float, Tuple[float, float]] = 0.45,
+    alpha_gradientglow: Union[float, tuple[float, float]] = 0.45,
     gradient_start: str = "bottom",
     N_sampling_points: int = 50,
 ) -> None:
@@ -105,15 +114,15 @@ def add_gradient_fill(
         Number of points used to sample the gradient. Higher values
         improve visual quality at the cost of performance.
     """
-
     choices = ["min", "max", "top", "bottom", "zero"]
-    if not gradient_start in choices:
+    if gradient_start not in choices:
         raise ValueError(f"key must be one of {choices}")
-    if type(alpha_gradientglow) == float:
+    if isinstance(alpha_gradientglow, float):
         alpha_gradientglow = (0.0, alpha_gradientglow)
     if not (
-        type(alpha_gradientglow) == tuple
-        and type(alpha_gradientglow[0]) == type(alpha_gradientglow[1]) == float
+        isinstance(alpha_gradientglow, tuple)
+        and len(alpha_gradientglow) == 2
+        and all(isinstance(bound, float) for bound in alpha_gradientglow)
     ):
         raise ValueError(
             "alpha_gradientglow must be a float or a tuple of two "
@@ -160,20 +169,20 @@ def add_gradient_fill(
                 raise ValueError("key cannot be 'zero' on log plots")
             scaler = np.log
         else:
-            scaler = lambda x: x
+            scaler = _identity
 
         a, b = alpha_gradientglow
         ya, yb = extent[2], extent[3]
-        moment = lambda y: (scaler(y) - scaler(ya)) / (scaler(yb) - scaler(ya))
         ys = np.linspace(ya, yb, N_sampling_points)
 
-        if gradient_start in ("min", "bottom"):
-            k = moment(ys)
-        elif gradient_start in ("top", "max"):
-            k = 1 - moment(ys)
-        elif gradient_start in ("zero",):
+        # 'zero' ramps outward from y=0 and never divides by the span, so the
+        # moment is computed only on the branches that actually need it.
+        if gradient_start == "zero":
             abs_ys = np.abs(ys)
             k = abs_ys / np.max(abs_ys)
+        else:
+            moment = (scaler(ys) - scaler(ya)) / (scaler(yb) - scaler(ya))
+            k = moment if gradient_start in ("min", "bottom") else 1 - moment
 
         alphas = k * b + (1 - k) * a
         z[:, :, -1] = alphas[:, None]
@@ -208,7 +217,6 @@ def add_glow_and_grad_fill(
         The Matplotlib axes to draw on. Defaults to the current global
         figure. Default is None.
     """
-
     make_lines_glow(ax)
     add_gradient_fill(ax)
 
@@ -240,7 +248,6 @@ def make_scatter_glow(
         Overall transparency of the glow effect. Default is 0.45. The
         alpha is divided among the glow layers.
     """
-
     if ax is None:
         ax = plt.gca()
 
@@ -280,7 +287,6 @@ def add_bar_gradient(
         If True, the gradient is applied horizontally. Otherwise, it is
         applied vertically. Default is False.
     """
-
     if not ax:
         ax = plt.gca()
 
@@ -336,7 +342,6 @@ def add_hist_gradient(
         If True, the gradient is applied horizontally instead of
         vertically. Default is False.
     """
-
     if ax is None:
         ax = plt.gca()
 
@@ -396,7 +401,6 @@ def fancy_plot(func, *args, **kwargs):
         The figure returned by the plotting function, with glow and
         gradient effects applied.
     """
-
     plt.style.use("night_wave")
 
     fig = func(*args, show_fig=False, **kwargs)  # call original function

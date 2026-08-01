@@ -1,13 +1,13 @@
-"""A list of examples of different plots and how to save them so that
-they all have exactly the same size.
+"""Examples of different plots and how to save them at identical sizes.
+
+Every figure here is saved through the same helper, so the exported files
+line up pixel for pixel regardless of what is drawn inside them.
 """
 
 import os
 
 import numpy as np
 from matplotlib import pyplot as plt
-
-import komorebi_mpl
 
 plt.style.use("classic_mpl")
 

@@ -40,7 +40,7 @@ MIN_CONTRAST = 0.10
 
 
 def _declared_keys(path):
-    """rcParam names in a sheet, in file order, comments stripped."""
+    """RcParam names in a sheet, in file order, comments stripped."""
     keys = []
     with open(path, encoding="utf-8") as fh:
         for raw in fh:
@@ -137,7 +137,7 @@ def test_box_border_is_visible(style):
 
 
 def test_boxplot_artists_are_visible(style):
-    """matplotlib defaults these to literal black, invisible on dark styles."""
+    """Matplotlib defaults these to literal black, invisible on dark styles."""
     background = mpl.rcParams["axes.facecolor"]
     for key in (
         "boxplot.boxprops.color",

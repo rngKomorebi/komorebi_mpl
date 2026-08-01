@@ -20,10 +20,15 @@ import changelog  # noqa: E402  (needs the sys.path entry above)
 
 CHANGELOG = ROOT / "CHANGELOG.md"
 
+# The first release this changelog records. A released section is frozen, so
+# pinning one keeps the parser honest about real input rather than only about
+# the fixtures in 'test_release_tool.py'.
+FIRST_RELEASE = "0.0.2"
+
 
 def test_changelog_parses_into_sections():
     sections = changelog.parse_sections(CHANGELOG.read_text(encoding="utf-8"))
-    assert "0.0.1" in sections, f"parsed versions: {list(sections)}"
+    assert FIRST_RELEASE in sections, f"parsed versions: {list(sections)}"
 
 
 def test_every_released_section_has_content():
@@ -58,8 +63,8 @@ def test_link_definitions_are_not_part_of_a_section():
 
 
 def test_leading_v_is_stripped():
-    assert changelog.notes_for("v0.0.1", CHANGELOG) == changelog.notes_for(
-        "0.0.1", CHANGELOG
+    assert changelog.notes_for(f"v{FIRST_RELEASE}", CHANGELOG) == changelog.notes_for(
+        FIRST_RELEASE, CHANGELOG
     )
 
 
