@@ -4,10 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "komorebi_mpl"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A collection of matplotlib style sheets for scientific plots, built on one shared parameter template"
 authors = [{ name = "Sergei Kulkov", email = "sergei.kulkov23@gmail.com" }]
 license = { text = "MIT" }
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.9"
 keywords = ["matplotlib", "style", "stylesheet", "plotting", "visualization"]
@@ -19,7 +20,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Framework :: Matplotlib",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Topic :: Scientific/Engineering :: Visualization",
 ]
 
